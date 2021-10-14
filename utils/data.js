@@ -1,4 +1,21 @@
+ import bcrypt from 'bcryptjs'
+ 
  const data = {
+     users: [
+         
+        {
+        name: 'John',
+        email: 'admin@example.com',
+        isAdmin: true, 
+        password: bcrypt.hashSync('123456')
+        },
+        {
+        name: 'Jane',
+        email: 'user@example.com',
+        isAdmin: false, 
+        password: bcrypt.hashSync('123456')
+        }
+    ],
     products: [
         {
             name: 'Free shirt',
@@ -69,7 +86,7 @@
             brand: 'Casely',
             rating: 4.3,
             numReviews: 10,
-            countInStock: 20,
+            countInStock: 0,
             description: 'Smart looking pants'
         }
        

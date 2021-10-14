@@ -5,7 +5,10 @@ export const Store = createContext()
 console.log(Store)
 
 const initialState ={
-    darkMode : Cookies.get('darkMode') === 'ON'? true : false
+    darkMode : Cookies.get('darkMode') === 'ON'? true : false, //when you get on the page for the fisrt time, the darkmoe is set to false because the logic in the cookies is false now
+    cart : {
+        cartItems: Cookies.get('cartItems') ? JSON.parse(Cookies.get('cartItems')): [],
+    }
 };
 
 export const reducer = (state, action)=>{
@@ -14,6 +17,28 @@ export const reducer = (state, action)=>{
             return {...state, darkMode: true}
         case 'DARK_MODE_OFF' :
             return {...state, darkMode: false}
+        case 'CART_ADD_ITEM': {
+                const newItem = action.payload; //item gotten from payload
+                const existItem = state.cart.cartItems.find( //<= checking to see if the item gotten from the payload already exists
+                  (item) => item._id === newItem._id
+                );
+                const cartItems = existItem ? state.cart.cartItems.map((item) => //<= if existitem is true, map through the cartitems, get the item and then replace the current value wuth the new value "newItem" otherwise just add the new item to the array
+                 item.name === existItem.name ? newItem : item
+                    )
+                  : 
+                  [...state.cart.cartItems, newItem];
+                Cookies.set('cartItems', JSON.stringify(cartItems));
+                return { ...state, cart: { ...state.cart, cartItems } };
+              }
+         case 'CART_REMOVE_ITEM': {
+                const cartItems = state.cart.cartItems.filter(
+                  (item) => item._id !== action.payload._id
+                );
+                Cookies.set('cartItems', JSON.stringify(cartItems));
+                return { ...state, cart: { ...state.cart, cartItems } };
+              }
+          
+
         default:
         return state
     }

@@ -1,6 +1,6 @@
 import React, {useContext} from 'react'
 import Head from 'next/head'
-import {AppBar, Container, CssBaseline, Link, Toolbar, Typography, ThemeProvider, Switch} from '@material-ui/core'
+import {AppBar, Container, CssBaseline, Link, Toolbar, Typography, ThemeProvider, Switch, Badge} from '@material-ui/core'
 import { createMuiTheme} from '@material-ui/core/styles'
 import useStyles from '../../utils/styles'
 import NextLink from 'next/link'
@@ -8,9 +8,10 @@ import {Store} from '../../utils/Store'
 import Cookies from 'js-cookie'
 
 
+
 const Layout = ({title, children, description}) => {
     const {state, dispatch} = useContext(Store)
-    const {darkMode} =state
+    const {darkMode, cart} =state
     const classes= useStyles()
     const darkModeHandler = ()=>{
         dispatch({type: darkMode? 'DARK_MODE_OFF' : 'DARK_MODE_ON'})
@@ -60,7 +61,9 @@ const Layout = ({title, children, description}) => {
                             <Switch checked={darkMode} onChange={darkModeHandler}></Switch>
                         <NextLink href='/cart' passHref>
                             <Link>
-                            Cart
+                           {
+                               cart.cartItems.length >0 ? (<Badge color='secondary' badgeContent={cart.cartItems.length}>cart</Badge>): ('cart')
+                           }
                             </Link>
                         </NextLink>
 

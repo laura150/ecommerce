@@ -1,5 +1,5 @@
-import React from 'react'
-import {useRouter} from 'next/router'
+import React, {useContext} from 'react'
+import { useRouter} from 'next/router'
 import {data} from '../../utils/data'
 import Layout from '../../Components/Layout/Layout' 
 import { Link, Grid, List , ListItem, Typography, Card, Button } from '@material-ui/core'
@@ -8,12 +8,17 @@ import useStyles from '../../utils/styles'
 import Image from 'next/image'
 import Product from '../../models/Product'
 import db from '../../utils/db'
+import {Store} from '../../utils/Store'
+import axios from 'axios'
 
 const Productpage = (props) => {
     const {product} = props
+    console.log(product)
+    const {state, dispatch} = useContext(Store)
     const classes = useStyles()
+    const router = useRouter()
     console.log(data)
-//     const router = useRouter()
+//    
 //     const {slug} = router.query
 //     console.log(slug)
 //    const product = data.products.find((a)=> a.slug === slug)
@@ -22,9 +27,22 @@ const Productpage = (props) => {
        return <div>Product Not Found</div>
    }
   const addToCartHandler = async()=>{
-    const {data} = await axios.get(`api/products/${product._id}`)
-    // dispatch({type: 'CART_ADD_ITEM', payload:})
+    const existItem = state.cart.cartItems.find((x) => x._id === product._id);
+    const quantity = existItem ? existItem.quantity + 1 : 1;
+    const {data} = await axios.get(`/api/products/${product._id}`) 
+
+    if( data.countInStock < quantity){
+        window.alert('Sorry this product is out of stock')
+        return
+    }
+     dispatch({type: 'CART_ADD_ITEM', payload:{...product, quantity}})
+
+     router.push('/cart')
+
   }
+
+  
+ 
     return (
         <Layout title={product.name} description={product.description}>
             <div className={classes.section}>
@@ -97,7 +115,7 @@ export default Productpage
 
 export async function getServerSideProps(context){ //passing context here so we can extract params from context for the url of each product
     const {params} = context
-    const{slug} = params
+    const{slug} = params //extracting slug from parms because thats what you named the page, it it were [id].js you named it, thats what youll be extracting
     await db.connect()
     const product = await Product.findOne({slug}).lean()
      await db.disconnect() 
@@ -105,6 +123,7 @@ export async function getServerSideProps(context){ //passing context here so we 
      return {
        props:{
          product: db.convertDocToObj(product), 
+        
        }
      }
    }
