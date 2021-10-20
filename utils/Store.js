@@ -8,8 +8,13 @@ const initialState ={
     darkMode : Cookies.get('darkMode') === 'ON'? true : false, //when you get on the page for the fisrt time, the darkmoe is set to false because the logic in the cookies is false now
     cart : {
         cartItems: Cookies.get('cartItems') ? JSON.parse(Cookies.get('cartItems')): [],
-    }
+    },
+    userInfo: Cookies.get('userInfo')
+    ? JSON.parse(Cookies.get('userInfo'))
+    : null,
 };
+
+console.log(Cookies.get('userInfo'))
 
 export const reducer = (state, action)=>{
     switch(action.type){
@@ -37,6 +42,9 @@ export const reducer = (state, action)=>{
                 Cookies.set('cartItems', JSON.stringify(cartItems));
                 return { ...state, cart: { ...state.cart, cartItems } };
               }
+          case 'USER_LOGIN':{
+            return { ...state, userInfo: action.payload }
+          }
           
 
         default:

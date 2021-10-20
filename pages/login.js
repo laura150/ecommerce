@@ -1,31 +1,28 @@
 import { List, Typography, TextField, Link , Button} from '@material-ui/core'
 import Layout from '../Components/Layout/Layout'
-import React from 'react'
+import React, {useContext} from 'react'
 import { ListItem } from '@material-ui/core'
 import useStyles from '../utils/styles'
 import NextLink from 'next/link'
 import axios from 'axios'
 import {useState} from 'react'
+import {Store} from '../utils/Store'
+import {useRouter} from 'next/router'
+import Cookies from 'js-cookie'
+
 
 
 const Login = () => {
+  const router = useRouter()
+  const {redirect} =router.query //
+  const { dispatch, state} = useContext(Store)
+  const {userInfo} = state
+  if(userInfo){// if user is there, there is no need to go to the login form. when the user is loggedin and tries to access the login form, this prevents it
+    router.push('/')
+  }
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const classes = useStyles()
-    // const handleSubmit= async (e)=>{
-    // //     e.preventDefault()
-    // //     try{
-    // //         const {data} = await axios.post('api/users/login', {
-    // //             email,
-    // //             password
-    // //         })
-    // //         alert('sucess login')
-    // //     }catch(err){
-
-    // //       alert(err.message )
-    // //     }
-    // // }
-
     const submitHandler = async (e) => {
         e.preventDefault();
         try {
@@ -33,11 +30,14 @@ const Login = () => {
             email,
             password,
           });
-          alert('succss login');
+          console.log(data)
+          dispatch({ type: 'USER_LOGIN', payload: data });
+          Cookies.set('userInfo', data)
+          router.push(redirect || '/');
         } catch (err) {
-        //   alert(err.response.data ? err.response.data.message : err.message);
-        alert(err.message )
+           alert(err.response.data ? err.response.data.message : err.message); //meaning if there is an error in the data coming from the backend, render the error message else render the default 401 error message
         }
+       
       };
     return (
         <Layout title='Login'>

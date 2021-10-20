@@ -36,7 +36,7 @@ const Productpage = (props) => {
         return
     }
      dispatch({type: 'CART_ADD_ITEM', payload:{...product, quantity}})
-
+   
      router.push('/cart')
 
   }
@@ -116,6 +116,7 @@ export default Productpage
 export async function getServerSideProps(context){ //passing context here so we can extract params from context for the url of each product
     const {params} = context
     const{slug} = params //extracting slug from parms because thats what you named the page, it it were [id].js you named it, thats what youll be extracting
+    console.log(slug)
     await db.connect()
     const product = await Product.findOne({slug}).lean()
      await db.disconnect() 
