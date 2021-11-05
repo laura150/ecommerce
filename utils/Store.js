@@ -9,9 +9,8 @@ const initialState ={
     cart : {
         cartItems: Cookies.get('cartItems') ? JSON.parse(Cookies.get('cartItems')): [],
     },
-    userInfo: Cookies.get('userInfo')
-    ? JSON.parse(Cookies.get('userInfo'))
-    : null,
+    userInfo:Cookies.get('userInfo') ? JSON.parse(Cookies.get('userInfo')) : null
+  
 };
 
 console.log(Cookies.get('userInfo'))
@@ -43,6 +42,7 @@ export const reducer = (state, action)=>{
                 return { ...state, cart: { ...state.cart, cartItems } };
               }
           case 'USER_LOGIN':{
+           
             return { ...state, userInfo: action.payload }
           }
           

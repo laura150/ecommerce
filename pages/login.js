@@ -14,7 +14,7 @@ import Cookies from 'js-cookie'
 
 const Login = () => {
   const router = useRouter()
-  const {redirect} =router.query //
+  const {redirect} =router.query //login?redirect=/shipping
   const { dispatch, state} = useContext(Store)
   const {userInfo} = state
   if(userInfo){// if user is there, there is no need to go to the login form. when the user is loggedin and tries to access the login form, this prevents it
@@ -32,8 +32,9 @@ const Login = () => {
           });
           console.log(data)
           dispatch({ type: 'USER_LOGIN', payload: data });
-          Cookies.set('userInfo', data)
-          router.push(redirect || '/');
+          Cookies.set('userInfo', JSON.stringify(data))
+       
+          // router.push(redirect || '/');
         } catch (err) {
            alert(err.response.data ? err.response.data.message : err.message); //meaning if there is an error in the data coming from the backend, render the error message else render the default 401 error message
         }

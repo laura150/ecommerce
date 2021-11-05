@@ -1,6 +1,6 @@
 import React, {useContext} from 'react'
 import Head from 'next/head'
-import {AppBar, Container, CssBaseline, Link, Toolbar, Typography, ThemeProvider, Switch, Badge} from '@material-ui/core'
+import {AppBar, Container, CssBaseline, Link, Toolbar, Typography, ThemeProvider, Switch, Badge, Button} from '@material-ui/core'
 import { createMuiTheme} from '@material-ui/core/styles'
 import useStyles from '../../utils/styles'
 import NextLink from 'next/link'
@@ -11,7 +11,8 @@ import Cookies from 'js-cookie'
 
 const Layout = ({title, children, description}) => {
     const {state, dispatch} = useContext(Store)
-    const {darkMode, cart} =state
+    const {darkMode, cart, userInfo} =state
+    console.log(userInfo)
     const classes= useStyles()
     const darkModeHandler = ()=>{
         dispatch({type: darkMode? 'DARK_MODE_OFF' : 'DARK_MODE_ON'})
@@ -67,11 +68,19 @@ const Layout = ({title, children, description}) => {
                             </Link>
                         </NextLink>
 
-                        <NextLink href='/login' passHref>
+                        {
+                            userInfo? 
+                           
+                            <Button className={classes.navbarButton}>{userInfo.name}</Button>
+                            :
+                            <NextLink href='/login' passHref>
                             <Link>
-                            Login
+                                Login
                             </Link>
                         </NextLink>
+                            
+                        }
+                       
                         </div>
                     </Toolbar>
                 </AppBar>
